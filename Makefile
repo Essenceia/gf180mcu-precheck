@@ -1,9 +1,17 @@
 MAKEFILE_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-RUN_TAG = $(shell ls librelane/runs/ | tail -n 1)
 TOP = chip_top
-SLOT ?= 1x1
-DOMAIN ?= 5v
+
+PROJECT_DIR := ../expresso
+PROJECT_GDS := $(PROJECT_DIR)/final/gds/$(TOP).gds
+PROJECT_BUILD_LOGS := $(PROJECT_DIR)/final/metrics.csv
+PROJECT_UPLOAD := $(PROJECT_DIR)/precheck
+
+MANUFACTURING_ID := G802CAFE
+THREADS ?= 8
+
+RUN_TAG = $(shell ls librelane/runs/ | tail -n 1)
+SLOT ?= 0p5x0p5
 
 PDK_ROOT ?= $(MAKEFILE_DIR)/gf180mcu
 PDK ?= gf180mcuD
@@ -27,16 +35,15 @@ $(PDK_ROOT)/$(PDK):
 clone-pdk: $(PDK_ROOT)/$(PDK) ## Clone the gf180mcu PDK
 .PHONY: clone-pdk
 
-gf180mcu-example-layouts:
-	git clone https://github.com/wafer-space/gf180mcu-example-layouts.git
-
-clone-layouts: gf180mcu-example-layouts
-.PHONY: clone-layouts
-
-precheck: clone-pdk clone-layouts
-	python3 precheck.py --slot ${SLOT} --cob --input gf180mcu-example-layouts/${DOMAIN}/${SLOT}/${TOP}.oas --id DEADBEEF --workers max --threads 1 --output ${TOP}.oas
+precheck: clone-pdk $(PROJECT_GDS)
+	python3 precheck.py --slot ${SLOT} --cob --input $(PROJECT_GDS) --id $(MANUFACTURING_ID) --workers max --threads $(THREADS) --output ${TOP}.oas
 .PHONY: precheck
 
-precheck-no-cob: clone-pdk clone-layouts
-	python3 precheck.py --slot ${SLOT} --input gf180mcu-example-layouts/${DOMAIN}/${SLOT}/${TOP}.oas --id DEADBEEF --workers max --threads 1 --output ${TOP}.oas
+precheck-no-cob: clone-pdk $(PROJECT_GDS)
+	python3 precheck.py --slot ${SLOT} --input $(PROJECT_GDS) --id $(MANUFACTURING_ID) --workers max --threads $(THREADS) --output ${TOP}.oas
 .PHONY: precheck-no-cob
+
+upload: $(TOP).oas
+	gzip -k $<
+	cp $<.gz $(PROJECT_UPLOAD)/.
+	cp $(PROJECT_BUILD_LOGS) $(PROJECT_UPLOAD)/.
