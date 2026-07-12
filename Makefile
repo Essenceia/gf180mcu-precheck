@@ -6,6 +6,7 @@ PROJECT_DIR := ../expresso
 PROJECT_GDS := $(PROJECT_DIR)/final/gds/$(TOP).gds
 PROJECT_BUILD_LOGS := $(PROJECT_DIR)/final/metrics.csv
 PROJECT_UPLOAD := $(PROJECT_DIR)/precheck
+PROJECT_OAS_MD5 := $(PROJECT_UPLOAD)/$(TOP).oas.md5
 
 MANUFACTURING_ID := G802CAFE
 THREADS ?= 8
@@ -44,6 +45,7 @@ precheck-no-cob: clone-pdk $(PROJECT_GDS)
 .PHONY: precheck-no-cob
 
 upload: $(TOP).oas
-	gzip -k $<
+	md5sum $< | awk '{print $$1}' > $(PROJECT_OAS_MD5)
+	gzip -kf $<
 	cp $<.gz $(PROJECT_UPLOAD)/.
 	cp $(PROJECT_BUILD_LOGS) $(PROJECT_UPLOAD)/.
