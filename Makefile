@@ -49,3 +49,8 @@ upload: $(TOP).oas
 	gzip -kf $<
 	cp $<.gz $(PROJECT_UPLOAD)/.
 	cp $(PROJECT_BUILD_LOGS) $(PROJECT_UPLOAD)/.
+	# get latest render ( even if it is ugly without colors ) 
+	latest_run=$$(ls runs/. | sort | tail -n 1) && \
+	render_dir=$$(ls runs/$$latest_run/. | grep "render") && \
+	cp ./runs/$$latest_run/$$render_dir/*.png $(PROJECT_UPLOAD)/.
+
