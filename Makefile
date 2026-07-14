@@ -2,7 +2,9 @@ MAKEFILE_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 TOP = chip_top
 
-PROJECT_DIR := ../expresso
+PROJECT_DIR ?= ../expresso
+$(info project director used $(PROJECT_DIR)) 
+
 PROJECT_GDS := $(PROJECT_DIR)/final/gds/$(TOP).gds
 PROJECT_BUILD_LOGS := $(PROJECT_DIR)/final/metrics.csv
 PROJECT_UPLOAD := $(PROJECT_DIR)/precheck
