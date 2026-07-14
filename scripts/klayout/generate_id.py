@@ -93,7 +93,7 @@ def check_top(
     # Generate QRCode ID
     
     qrcode_width = 142.8
-    qrcdoe_height =  142.8
+    qrcdoe_height = 142.8
     qrcode_pixel = 21
     qrcode_pixel_size = 142.8 / 21
 
@@ -130,6 +130,9 @@ def check_top(
     def draw_text_id(ly, text):
         "Create text on all metal layers and flatten the cell."
         
+        text_id_width = 195.5
+        text_id_height = 59.5
+        
         text_id_cell = ly.cell(ly.add_cell(f"text_id_{text}"))
         
         for layer in [Layers.Metal1, Layers.Metal2, Layers.Metal3, Layers.Metal4, Layers.Metal5]:
@@ -155,10 +158,14 @@ def check_top(
         # Flatten all levels
         text_id_cell.flatten(-1)
         
+        # Ensure the text fits in the specified area
+        assert text_id_cell.dbbox().width() <= text_id_width, "text_id_cell width larger than expected"
+        assert text_id_cell.dbbox().height() <= text_id_height, "text_id_cell height larger than expected"
+        
         # Add layers
         for layer in [Layers.PR_bndry, Layers.PMNDMY, Layers.NDMY]:
             text_id_cell.shapes(layer).insert(
-                pya.DBox.new(0, 0, text_id_cell.dbbox().width(), text_id_cell.dbbox().height())
+                pya.DBox.new(0, 0, text_id_width, text_id_height)
             )
         
         return text_id_cell
