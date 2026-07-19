@@ -1,6 +1,6 @@
 MAKEFILE_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-TOP = chip_top
+TOP ?= chip_top
 
 PROJECT_DIR ?= ../expresso
 $(info project director used $(PROJECT_DIR)) 
