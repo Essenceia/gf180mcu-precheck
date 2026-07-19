@@ -1,7 +1,7 @@
 MAKEFILE_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 RUN_TAG = $(shell ls librelane/runs/ | tail -n 1)
-TOP = chip_top
+TOP ?= chip_top
 SLOT ?= 1x1
 DOMAIN ?= 5v
 
