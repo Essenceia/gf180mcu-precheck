@@ -49,7 +49,7 @@ precheck-no-cob: clone-pdk clone-layouts
 	gzip -kf ${TOP}.oas	
 .PHONY: precheck-no-cob
 
-clean: 
+clean: ## Delete *.oas, *.md5 and *.gz 
 	rm -f ./*.oas
 	rm -f ./*.md5
 	rm -f ./*.gz
