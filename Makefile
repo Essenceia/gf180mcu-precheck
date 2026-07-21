@@ -9,8 +9,9 @@ PDK_ROOT ?= $(MAKEFILE_DIR)/gf180mcu
 PDK ?= gf180mcuD
 PDK_COMMIT ?= d658698bd8bcf4e05fc7b5991a701247ba0d744c
 
-MANIFACTURING_ID ?= DEADBEEF 
+ID ?= DEADBEEF 
 THREADS ?= 1
+WORKERS ?= max
 INPUT ?= gf180mcu-example-layouts/${DOMAIN}/${SLOT}/${TOP}.oas  
  
 .DEFAULT_GOAL := help
@@ -38,19 +39,10 @@ clone-layouts: gf180mcu-example-layouts
 .PHONY: clone-layouts
 
 precheck: clone-pdk clone-layouts
-	python3 precheck.py --slot ${SLOT} --cob --input ${INPUT} --id ${MANIFACTURER_ID} --workers max --threads ${THREADS} --output ${TOP}.oas
-	md5sum ${INPUT} | awk '{print $$1}' > $(TOP).mds
-	gzip -kf ${TOP}.oas
+	python3 precheck.py --slot ${SLOT} --cob --input ${INPUT} --id ${ID} --workers ${WORKERS} --threads ${THREADS} --output ${TOP}.oas
 .PHONY: precheck
 
 precheck-no-cob: clone-pdk clone-layouts
-	python3 precheck.py --slot ${SLOT} --input ${INPUT} --id ${MANIFACTURER_ID} --workers max --threads ${THREADS} --output ${TOP}.oas
-	md5sum ${INPUT} | awk '{print $$1}' > $(TOP).mds
-	gzip -kf ${TOP}.oas	
+	python3 precheck.py --slot ${SLOT} --input ${INPUT} --id ${ID} --workers ${WORKERS} --threads ${THREADS} --output ${TOP}.oas
 .PHONY: precheck-no-cob
 
-clean: ## Delete *.oas, *.md5 and *.gz 
-	rm -f ./*.oas
-	rm -f ./*.md5
-	rm -f ./*.gz
-.PHONY: clean
