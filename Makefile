@@ -45,4 +45,3 @@ precheck: clone-pdk clone-layouts
 precheck-no-cob: clone-pdk clone-layouts
 	python3 precheck.py --slot ${SLOT} --input ${INPUT} --id ${ID} --workers ${WORKERS} --threads ${THREADS} --output ${TOP}.oas
 .PHONY: precheck-no-cob
-
